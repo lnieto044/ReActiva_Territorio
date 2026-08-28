@@ -20,6 +20,7 @@ export function AppFooter() {
           <a href="/#faq" className="hover:text-stone-900">Preguntas frecuentes</a>
           <a href="/#proyecto" className="hover:text-stone-900">Sobre el proyecto</a>
           <Link to="/seguridad" className="hover:text-stone-900">Seguridad de tu cuenta</Link>
+          <Link to="/privacidad" className="hover:text-stone-900">Privacidad</Link>
           <a href="mailto:info@saludgo.org" className="flex items-center gap-1.5 hover:text-stone-900">
             <MailIcon width={13} height={13} />
             Soporte

@@ -684,7 +684,8 @@ export function LandingPage() {
             ))}
           </div>
           <p className="text-xs" style={{ color: '#97A3AA' }}>
-            © ReActiva Territorio — Plataforma de recuperación territorial
+            © ReActiva Territorio — Plataforma de recuperación territorial ·{' '}
+            <Link to="/privacidad" className="hover:underline">Aviso de privacidad</Link>
           </p>
         </div>
       </footer>

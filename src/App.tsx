@@ -5,6 +5,7 @@ import { SyncStatusBanner } from './components/SyncStatusBanner';
 import { RequireAuth } from './components/RequireAuth';
 import { RequireRole } from './components/RequireRole';
 import { LandingPage } from './pages/LandingPage';
+import { PrivacidadPage } from './pages/PrivacidadPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
@@ -40,6 +41,7 @@ export function App() {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/" element={<LandingPage />} />
+      <Route path="/privacidad" element={<PrivacidadPage />} />
 
       <Route
         path="/panel"
