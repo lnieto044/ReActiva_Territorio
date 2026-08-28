@@ -4,9 +4,16 @@ import { getAuth } from 'firebase-admin/auth';
 import { calcularPrioridad } from '../src/domain/priority';
 import type { NivelAfectacionInmueble } from '../src/types/case';
 
-process.env.FIRESTORE_EMULATOR_HOST ??= '127.0.0.1:8080';
-process.env.FIREBASE_AUTH_EMULATOR_HOST ??= '127.0.0.1:9099';
-initializeApp({ projectId: 'demo-reactiva-territorio' });
+// Por defecto siembra contra el emulador local. Para sembrar el proyecto
+// real de producción: SEED_TARGET=prod SEED_PROJECT_ID=<id>
+// GOOGLE_APPLICATION_CREDENTIALS=<ruta a la service account key> npm run seed
+// (sin las variables de emulador — usa credenciales reales vía ADC).
+const isProd = process.env.SEED_TARGET === 'prod';
+if (!isProd) {
+  process.env.FIRESTORE_EMULATOR_HOST ??= '127.0.0.1:8080';
+  process.env.FIREBASE_AUTH_EMULATOR_HOST ??= '127.0.0.1:9099';
+}
+initializeApp({ projectId: process.env.SEED_PROJECT_ID ?? 'demo-reactiva-territorio' });
 const db = getFirestore();
 const auth = getAuth();
 

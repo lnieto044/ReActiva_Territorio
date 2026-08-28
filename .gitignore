@@ -9,3 +9,5 @@ ui-debug.log
 *.log
 *.tsbuildinfo
 .emulator-data
+serviceAccountKey*.json
+*-firebase-adminsdk-*.json
