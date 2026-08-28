@@ -21,6 +21,10 @@ Ecuador y Panamá.
 Firebase real, no una simulación local. Cuentas de prueba abajo, en
 [Cuentas de prueba](#cuentas-de-prueba).
 
+**[docs/pitch.mp4](docs/pitch.mp4)** — pitch corto (~2 minutos, dentro del
+límite de presentación): el problema real, la solución, y highlights de la
+plataforma funcionando, con fotos reales del sismo y narración en español.
+
 **[docs/demo.mp4](docs/demo.mp4)** — video completo narrado (~16 minutos, voz
 generada con Gemini TTS en español) recorriendo la plataforma sin omitir
 nada: landing pública completa, registro/login/recuperar contraseña, los 3
