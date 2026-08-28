@@ -356,11 +356,14 @@ export function LandingPage() {
         <Reveal className="mx-auto max-w-2xl text-center">
           <SectionKicker>EL CONTEXTO</SectionKicker>
           <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl" style={{ fontFamily: 'Manrope, sans-serif', color: '#16202B' }}>
-            Un sismo de magnitud 7.4 en Chocó, Colombia
+            Un sismo de magnitud 7.4 con epicentro en Chocó, Colombia
           </h2>
           <p className="mt-4 text-sm leading-relaxed sm:text-base" style={{ color: '#647079' }}>
-            Miles de viviendas y comercios resultaron afectados. ReActiva Territorio responde a esta realidad:
-            no es un ejercicio hipotético, sino una herramienta pensada para lo que ya está pasando en el territorio.
+            El 10 de agosto de 2026, un sismo de magnitud 7.4 con epicentro en San José del Palmar (Chocó) dejó
+            miles de viviendas y comercios afectados —no solo en el Chocó rural, sino en capitales como Quibdó,
+            Cali, Pereira, Manizales y Armenia— y se sintió incluso en Ecuador y Panamá. ReActiva Territorio
+            responde a esta realidad: no es un ejercicio hipotético, sino una herramienta pensada para lo que ya
+            está pasando en el territorio.
           </p>
         </Reveal>
 

@@ -69,9 +69,11 @@ interface CaseSpec {
   diasAtras: number;
 }
 
-// 14 cases spread across 5 real Chocó municipalities and every case status,
-// so every panel/chart has enough real variety to be worth showing —
-// not just María and Pedro at "pendiente".
+// 19 cases spread across the real reach of the 10 Aug 2026 magnitude-7.4
+// earthquake — 5 rural Chocó municipalities near the epicenter plus 5
+// affected capitals (Quibdó, Cali, Pereira, Manizales, Armenia) — and every
+// case status, so every panel/chart has enough real variety to be worth
+// showing, not just María and Pedro at "pendiente".
 const CASES: CaseSpec[] = [
   {
     id: 'maria-tienda-demo', nombreReportante: 'María', telefono: '3001234567', municipio: 'San José del Palmar', vereda: 'Vereda El Cedro',
@@ -171,6 +173,45 @@ const CASES: CaseSpec[] = [
     perdidaTotalIngresos: true, interrupcionServicioEsencial: false, personasVulnerablesACargo: 0, nivelAfectacionInmueble: 'parcial', aislamientoGeografico: false,
     ayudaNecesitada: ['inventario_comercial'], estado: 'pendiente', diasAtras: 13,
   },
+  // El sismo del 10 de agosto de 2026 no solo afectó al Chocó rural: dejó daños
+  // y víctimas en Quibdó y en varias capitales del Eje Cafetero y el Valle del
+  // Cauca (Pereira, Cali, Manizales, Armenia) — los siguientes casos reflejan
+  // esa cobertura real, no solo los municipios pequeños cercanos al epicentro.
+  {
+    id: 'case-natalia-quibdo', nombreReportante: 'Natalia', telefono: '3011223344', municipio: 'Quibdó', vereda: 'Barrio Reposo',
+    ubicacion: { lat: 5.6947, lng: -76.6611 }, tipoAfectacion: 'negocio', categoria: 'materiales_construccion',
+    descripcion: 'Ferretería con parte de la fachada colapsada, capital del Chocó con daños graves en varias edificaciones.', personasAfectadas: 4, actividadEconomica: 'Ferretería', ingresosAprox: 850000,
+    perdidaTotalIngresos: true, interrupcionServicioEsencial: false, personasVulnerablesACargo: 1, nivelAfectacionInmueble: 'total', aislamientoGeografico: false,
+    ayudaNecesitada: ['materiales_construccion'], estado: 'en_verificacion', diasAtras: 2,
+  },
+  {
+    id: 'case-julian-cali', nombreReportante: 'Julián', telefono: '3122334455', municipio: 'Cali', vereda: 'Comuna 10',
+    ubicacion: { lat: 3.4516, lng: -76.5320 }, tipoAfectacion: 'negocio', categoria: 'inventario_comercial',
+    descripcion: 'Local comercial con vitrinas y mercancía destruidas; comerciantes de la zona buscan reactivar sus negocios.', personasAfectadas: 3, actividadEconomica: 'Almacén de ropa', ingresosAprox: 1200000,
+    perdidaTotalIngresos: true, interrupcionServicioEsencial: false, personasVulnerablesACargo: 0, nivelAfectacionInmueble: 'parcial', aislamientoGeografico: false,
+    ayudaNecesitada: ['inventario_comercial'], estado: 'verificado', diasAtras: 4,
+  },
+  {
+    id: 'case-monica-pereira', nombreReportante: 'Mónica', telefono: '3133445566', municipio: 'Pereira', vereda: 'Barrio Cuba',
+    ubicacion: { lat: 4.8133, lng: -75.6961 }, tipoAfectacion: 'vivienda', categoria: 'salud',
+    descripcion: 'Vivienda con daño estructural severo en zona con la mayor cantidad de víctimas fatales del sismo; familia sin atención médica cercana.', personasAfectadas: 5,
+    perdidaTotalIngresos: false, interrupcionServicioEsencial: true, personasVulnerablesACargo: 2, nivelAfectacionInmueble: 'total', aislamientoGeografico: false,
+    ayudaNecesitada: ['salud', 'materiales_construccion'], estado: 'atendido', diasAtras: 6,
+  },
+  {
+    id: 'case-oscar-manizales', nombreReportante: 'Óscar', telefono: '3144556677', municipio: 'Manizales', vereda: 'Barrio Chipre',
+    ubicacion: { lat: 5.0689, lng: -75.5174 }, tipoAfectacion: 'infraestructura_comunitaria', categoria: 'transporte',
+    descripcion: 'Derrumbe sobre vía barrial reportado tras el sismo, comunidad con acceso restringido.', personasAfectadas: 25,
+    perdidaTotalIngresos: false, interrupcionServicioEsencial: true, personasVulnerablesACargo: 8, nivelAfectacionInmueble: 'parcial', aislamientoGeografico: true,
+    ayudaNecesitada: ['transporte', 'otro'], estado: 'pendiente', diasAtras: 8,
+  },
+  {
+    id: 'case-sofia-armenia', nombreReportante: 'Sofía', telefono: '3155667788', municipio: 'Armenia', vereda: 'Barrio La Castellana',
+    ubicacion: { lat: 4.5389, lng: -75.6723 }, tipoAfectacion: 'negocio', categoria: 'alimentos',
+    descripcion: 'Panadería familiar con horno inutilizable y pérdida de insumos tras el sismo.', personasAfectadas: 3, actividadEconomica: 'Panadería', ingresosAprox: 500000,
+    perdidaTotalIngresos: true, interrupcionServicioEsencial: false, personasVulnerablesACargo: 1, nivelAfectacionInmueble: 'parcial', aislamientoGeografico: false,
+    ayudaNecesitada: ['alimentos', 'materiales_construccion'], estado: 'pendiente', diasAtras: 11,
+  },
 ];
 
 interface OfferSpec {
@@ -197,6 +238,8 @@ const OFFERS: OfferSpec[] = [
   { id: 'oferta-transporte-demo', tipoRecurso: 'transporte', descripcion: 'Cupos de transporte comunitario para materiales', cantidad: 10, unidadMedida: 'viajes', cantidadAsignada: 0, municipioCobertura: ['San José del Palmar', 'Tadó'], entidadResponsable: 'Cooperativa de Transportadores', medioEntrega: 'transporte_comunitario', estado: 'cerrada' },
   { id: 'oferta-materiales2-demo', tipoRecurso: 'materiales_construccion', descripcion: 'Materiales para reparación de muros y paredes', cantidad: 80, unidadMedida: 'bultos de cemento', cantidadAsignada: 20, municipioCobertura: ['Condoto', 'Istmina', 'Tadó'], entidadResponsable: 'Constructora Solidaria', medioEntrega: 'entrega_a_domicilio', estado: 'parcialmente_asignada' },
   { id: 'oferta-inventario2-demo', tipoRecurso: 'inventario_comercial', descripcion: 'Kits de herramientas para talleres y negocios', cantidad: 15, unidadMedida: 'kits', cantidadAsignada: 15, municipioCobertura: ['Condoto', 'Nóvita'], entidadResponsable: 'Cámara de Comercio del Chocó', medioEntrega: 'recogida_en_punto', estado: 'agotada' },
+  { id: 'oferta-salud-ejecafetero-demo', tipoRecurso: 'salud', descripcion: 'Brigadas médicas y de salud mental para el Eje Cafetero', cantidad: 8, unidadMedida: 'jornadas', cantidadAsignada: 3, municipioCobertura: ['Pereira', 'Manizales', 'Armenia'], entidadResponsable: 'Cruz Roja Seccional', medioEntrega: 'recogida_en_punto', estado: 'parcialmente_asignada' },
+  { id: 'oferta-inventario-ciudades-demo', tipoRecurso: 'inventario_comercial', descripcion: 'Capital semilla y reposición de inventario para comercios afectados en capitales', cantidad: 25, unidadMedida: 'kits', cantidadAsignada: 0, municipioCobertura: ['Cali', 'Quibdó', 'Armenia'], entidadResponsable: 'Cámara de Comercio del Chocó', medioEntrega: 'entrega_a_domicilio', estado: 'disponible' },
 ];
 
 interface MatchSpec {
@@ -221,6 +264,8 @@ const MATCHES: MatchSpec[] = [
   { id: 'match-rosa-inventario', caseId: 'case-rosa-peluqueria', offerId: 'oferta-inventario-demo', estado: 'entregada', cantidadAsignada: 1, scoreCompatibilidad: 97, conEvidencia: true },
   { id: 'match-yolanda-materiales', caseId: 'case-yolanda-tienda', offerId: 'oferta-materiales2-demo', estado: 'verificada', cantidadAsignada: 20, scoreCompatibilidad: 91, conEvidencia: true },
   { id: 'match-mariela-techos', caseId: 'case-mariela-ferreteria', offerId: 'oferta-techos-demo', estado: 'cerrada', cantidadAsignada: 30, scoreCompatibilidad: 85, conEvidencia: true },
+  { id: 'match-monica-salud', caseId: 'case-monica-pereira', offerId: 'oferta-salud-ejecafetero-demo', estado: 'entregada', cantidadAsignada: 2, scoreCompatibilidad: 93, conEvidencia: true },
+  { id: 'match-julian-inventario', caseId: 'case-julian-cali', offerId: 'oferta-inventario-ciudades-demo', estado: 'sugerida', cantidadAsignada: 1, scoreCompatibilidad: 87 },
 ];
 
 async function seed() {

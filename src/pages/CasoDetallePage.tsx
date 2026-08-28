@@ -10,6 +10,15 @@ import { createMatch } from '../features/matches/api';
 import { useAuth } from '../context/AuthContext';
 import { puedeCrearCoincidencia, puedeVerificarCaso } from '../domain/permissions';
 
+const DESGLOSE_LABELS: Record<string, string> = {
+  perdidaTotalIngresos: 'Pérdida total de ingresos',
+  interrupcionServicioEsencial: 'Interrupción de servicio esencial',
+  personasVulnerablesACargo: 'Personas vulnerables a cargo',
+  nivelAfectacionInmueble: 'Nivel de afectación del inmueble',
+  tiempoSinAtencion: 'Tiempo sin atención',
+  aislamientoGeografico: 'Aislamiento geográfico',
+};
+
 export function CasoDetallePage() {
   const { id } = useParams<{ id: string }>();
   const { caso, hasPendingWrites, loading } = useCase(id);
@@ -97,7 +106,7 @@ export function CasoDetallePage() {
             <ul className="space-y-0.5">
               {Object.entries(caso.prioridad.desglose).map(([k, v]) => (
                 <li key={k} className="flex justify-between">
-                  <span>{k}</span>
+                  <span>{DESGLOSE_LABELS[k] ?? k}</span>
                   <span>{v} pts</span>
                 </li>
               ))}
