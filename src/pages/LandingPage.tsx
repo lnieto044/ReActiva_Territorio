@@ -24,6 +24,7 @@ import {
   FacebookIcon,
   WhatsAppIcon,
   LinkedInIcon,
+  ChevronRightIcon,
 } from '../components/icons';
 
 const SOCIALES = [
@@ -102,7 +103,40 @@ const NAV_ITEMS = [
   { href: '#como-funciona', label: 'Cómo funciona' },
   { href: '#servicios', label: 'Servicios' },
   { href: '#impacto', label: 'Impacto' },
+  { href: '#proyecto', label: 'Proyecto' },
+  { href: '#faq', label: 'FAQ' },
   { href: '#contacto', label: 'Contacto' },
+];
+
+const FAQ_ITEMS = [
+  {
+    q: '¿ReActiva Territorio predice sismos o genera alertas tempranas?',
+    a: 'No. Es una plataforma de coordinación y seguimiento de la recuperación después de una emergencia ya ocurrida — no un sistema de monitoreo o predicción sísmica. Las alertas dentro de la plataforma son operativas (casos urgentes sin atender, ofertas por agotarse) y proyecciones basadas en el ritmo real de verificación, nunca pronósticos de sismos.',
+  },
+  {
+    q: '¿Necesito conexión a internet para reportar un caso?',
+    a: 'No. El formulario de reporte guarda la información en tu dispositivo si no hay señal y la sincroniza automáticamente en cuanto vuelves a tener conexión — pensado para zonas rurales con conectividad limitada.',
+  },
+  {
+    q: '¿Cómo se decide qué caso se atiende primero?',
+    a: 'Cada caso verificado recibe un puntaje de prioridad calculado con criterios explícitos: pérdida total de ingresos, personas vulnerables a cargo, nivel de afectación de la vivienda o negocio, y aislamiento geográfico. No es una decisión manual ni arbitraria.',
+  },
+  {
+    q: '¿Quién puede publicar ofertas de ayuda?',
+    a: 'Cualquier organización, empresa o entidad registrada como "Organización" en la plataforma puede publicar materiales, empleos o servicios disponibles, y coordinar la entrega con seguimiento y evidencia.',
+  },
+  {
+    q: '¿Es gratis usar la plataforma?',
+    a: 'Sí. Esta es una versión piloto: reportar casos, publicar ofertas y hacer seguimiento no tiene costo para líderes comunitarios ni organizaciones.',
+  },
+  {
+    q: '¿Quién puede ver los datos que reporto?',
+    a: 'Solo personas con una cuenta registrada en la plataforma (líderes comunitarios, organizaciones y el equipo de coordinación) — nunca es información pública. Se usa exclusivamente para coordinar la respuesta.',
+  },
+  {
+    q: '¿Cómo obtengo acceso como equipo de coordinación?',
+    a: 'El acceso de coordinación se otorga manualmente por el equipo del proyecto, para mantener control sobre quién ve la información de todo el territorio. Escríbenos desde la sección de contacto si tu organización lo necesita.',
+  },
 ];
 
 function NavLinks({ dark = false }: { dark?: boolean }) {
@@ -124,6 +158,44 @@ function NavLinks({ dark = false }: { dark?: boolean }) {
 
 function SectionKicker({ children }: { children: React.ReactNode }) {
   return <p className="text-center text-xs font-bold tracking-wide" style={{ color: '#9A5B0E' }}>{children}</p>;
+}
+
+function FaqAccordion() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  return (
+    <div className="mx-auto max-w-3xl space-y-3">
+      {FAQ_ITEMS.map((item, i) => {
+        const open = openIndex === i;
+        return (
+          <div key={item.q} className="overflow-hidden rounded-xl bg-white transition-shadow hover:shadow-md" style={{ border: '1px solid #E2E5E4' }}>
+            <button
+              type="button"
+              onClick={() => setOpenIndex(open ? null : i)}
+              aria-expanded={open}
+              className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+            >
+              <span className="text-sm font-bold" style={{ fontFamily: 'Manrope, sans-serif', color: '#16202B' }}>{item.q}</span>
+              <span
+                className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full transition-transform duration-200"
+                style={{ background: '#EAF6F4', color: '#0B7C72', transform: open ? 'rotate(90deg)' : 'rotate(0deg)' }}
+              >
+                <ChevronRightIcon width={13} height={13} />
+              </span>
+            </button>
+            <div
+              className="grid transition-all duration-300 ease-out"
+              style={{ gridTemplateRows: open ? '1fr' : '0fr' }}
+            >
+              <div className="overflow-hidden">
+                <p className="px-5 pb-4 text-sm leading-relaxed" style={{ color: '#647079' }}>{item.a}</p>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 function ContactForm() {
@@ -430,6 +502,65 @@ export function LandingPage() {
               </div>
             </Reveal>
           ))}
+        </div>
+      </section>
+
+      <section id="proyecto" className="px-6 py-16 sm:py-20" style={{ background: '#F6F7F6' }}>
+        <div className="mx-auto max-w-4xl">
+          <Reveal>
+            <SectionKicker>SOBRE EL PROYECTO</SectionKicker>
+            <h2 className="mt-3 text-center text-2xl font-extrabold sm:text-3xl" style={{ fontFamily: 'Manrope, sans-serif', color: '#16202B' }}>
+              Por qué existe ReActiva Territorio
+            </h2>
+          </Reveal>
+          <Reveal delay={100}>
+            <div className="mx-auto mt-8 max-w-2xl space-y-4 text-sm leading-relaxed sm:text-base" style={{ color: '#4B565D' }}>
+              <p>
+                Después del sismo de magnitud 7.4 que afectó a Chocó y Valle del Cauca, la respuesta se organiza
+                a punta de mensajes sueltos, listas en papel y coordinación manual entre decenas de líderes
+                comunitarios, organizaciones y entidades. La información se pierde, la ayuda no siempre llega a
+                quien más la necesita primero, y nadie puede medir con certeza si la recuperación real está
+                pasando. ReActiva Territorio existe para cerrar esa brecha de coordinación.
+              </p>
+              <p>
+                Es importante ser claros sobre lo que es y lo que no es: esta es una herramienta de{' '}
+                <strong style={{ color: '#16202B' }}>coordinación y seguimiento de la recuperación</strong>, no un
+                sistema de predicción sísmica ni de alertas tempranas de terremotos. Las "alertas" que vas a ver
+                dentro de la plataforma son operativas — casos urgentes sin atender, ofertas por agotarse,
+                proyecciones sobre el ritmo de verificación — y nunca reemplazan a los sistemas oficiales de
+                monitoreo sísmico.
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={200}>
+            <div className="mx-auto mt-10 flex max-w-md items-center gap-4 rounded-2xl bg-white p-5" style={{ border: '1px solid #E2E5E4' }}>
+              <div
+                className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full text-lg font-extrabold text-white"
+                style={{ background: '#1B3556', fontFamily: 'Manrope, sans-serif' }}
+              >
+                LN
+              </div>
+              <div>
+                <p className="text-xs font-bold tracking-wide" style={{ color: '#9A5B0E' }}>CONSTRUIDO POR</p>
+                <p className="font-bold" style={{ fontFamily: 'Manrope, sans-serif', color: '#16202B' }}>Luis Nieto</p>
+                <p className="text-xs" style={{ color: '#647079' }}>Creador y desarrollador de ReActiva Territorio</p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <section id="faq" className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+        <Reveal>
+          <h2 className="text-center text-2xl font-extrabold sm:text-3xl" style={{ fontFamily: 'Manrope, sans-serif', color: '#16202B' }}>
+            Preguntas frecuentes
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-sm" style={{ color: '#647079' }}>
+            Todo lo que necesitas saber antes de empezar.
+          </p>
+        </Reveal>
+        <div className="mt-10">
+          <FaqAccordion />
         </div>
       </section>
 
