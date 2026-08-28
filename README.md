@@ -21,7 +21,11 @@ Ecuador y Panamá.
 Firebase real, no una simulación local. Cuentas de prueba abajo, en
 [Cuentas de prueba](#cuentas-de-prueba).
 
-**[docs/slides.html](docs/slides.html)** — diapositivas de presentación en
+**[docs/procesos.gif](docs/procesos.gif)** — GIF corto de los procesos más
+importantes en acción (reportar, mapa, coincidencias, alertas), clip real
+sin edición.
+
+**[docs/slides.pptx](docs/slides.pptx)** / **[docs/slides.html](docs/slides.html)** — diapositivas de presentación en
 vivo para el jurado (abre el archivo en cualquier navegador, navega con las
 flechas ← →).
 
