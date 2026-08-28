@@ -105,6 +105,32 @@ credenciales reales, Firebase envía el correo automáticamente — no hace
 falta configurar ningún servidor de correo aparte, y el código ya está listo
 para eso.
 
+## Verificación en dos pasos (2FA con Google Authenticator)
+
+Cualquier cuenta puede activar un segundo factor TOTP desde **Seguridad de tu
+cuenta** (ícono de escudo junto a "Cerrar sesión", o enlace en el pie del
+panel): genera un código QR, lo escaneas con Google Authenticator (o Authy,
+1Password, etc.), confirmas con el código de 6 dígitos, y desde ahí el login
+pide ese código además de la contraseña.
+
+**Esto usa la API de Multi-Factor Authentication de Firebase (`TotpMultiFactorGenerator`),
+no una implementación propia.** Dos requisitos reales de Firebase, no
+opcionales:
+
+1. El proyecto debe estar en **Identity Platform** (upgrade gratis, sin
+   costo salvo que superes 50,000 usuarios activos/mes). Se activa una vez
+   con el Admin SDK (`projectConfigManager().updateProjectConfig(...)`) o
+   desde Google Cloud Console.
+2. El **correo del usuario debe estar verificado** antes de poder inscribir
+   un segundo factor — si no lo está, la pantalla de Seguridad pide
+   verificarlo primero. Las 3 cuentas demo ya vienen con
+   `emailVerified: true` desde `seed.ts` para que la demo no tenga fricción.
+
+**No funciona contra el emulador local** — la generación de secretos TOTP no
+está implementada ahí (bug conocido de Firebase, ver
+[firebase-tools#6224](https://github.com/firebase/firebase-tools/issues/6224)).
+Solo se puede probar contra un proyecto real con Identity Platform activado.
+
 ## Pruebas unitarias
 
 La priorización (`src/domain/priority.ts`) y el motor de coincidencias
