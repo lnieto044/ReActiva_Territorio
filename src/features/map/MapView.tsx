@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { APIProvider, Map, InfoWindow } from '@vis.gl/react-google-maps';
+import { useEffect, useState } from 'react';
+import { APIProvider, Map, InfoWindow, useMap } from '@vis.gl/react-google-maps';
 import { Link } from 'react-router-dom';
 import { MapPlaceholder } from './MapPlaceholder';
 import { CaseMarker, COLOR_BY_NIVEL } from './CaseMarker';
@@ -32,6 +32,33 @@ function Legend() {
       </ul>
     </div>
   );
+}
+
+// Los casos ahora abarcan un territorio real mucho más amplio que solo el
+// Chocó rural (capitales como Cali o Pereira quedan a cientos de km del
+// epicentro), así que un centro/zoom fijos dejarían la mayoría fuera de
+// vista. Este componente ajusta el mapa para que siempre encuadre todos
+// los casos con ubicación, sin importar qué tan dispersos estén.
+function FitBounds({ cases }: { cases: CasoAfectado[] }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+    const puntos = cases.filter((c): c is CasoAfectado & { ubicacion: NonNullable<CasoAfectado['ubicacion']> } => c.ubicacion != null);
+    if (puntos.length === 0) return;
+
+    if (puntos.length === 1) {
+      map.setCenter(puntos[0].ubicacion);
+      map.setZoom(13);
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+    puntos.forEach((p) => bounds.extend(p.ubicacion));
+    map.fitBounds(bounds, 56);
+  }, [map, cases]);
+
+  return null;
 }
 
 function CasoPreview({ caso, onClose }: { caso: CasoAfectado; onClose: () => void }) {
@@ -75,6 +102,7 @@ export function MapView({ cases }: { cases: CasoAfectado[] }) {
           disableDefaultUI={false}
           onClick={() => setSelected(null)}
         >
+          <FitBounds cases={cases} />
           {cases.map((caso) => (
             <CaseMarker key={caso.id} caso={caso} onSelect={setSelected} />
           ))}
