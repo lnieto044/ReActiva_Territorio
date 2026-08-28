@@ -3,16 +3,29 @@ import { StatCard } from '../components/StatCard';
 import { Card } from '../components/ui';
 import { BarRow, type BarDatum } from '../components/charts/BarRow';
 import { TrendLine, type TrendPoint } from '../components/charts/TrendLine';
+import { DonutChart, type DonutDatum } from '../components/charts/DonutChart';
+import { Funnel, type FunnelStage } from '../components/charts/Funnel';
 import { useCases } from '../features/cases/api';
 import { useOffers } from '../features/offers/api';
 import { useMatches } from '../features/matches/api';
 import { CATEGORIA_LABELS, ESTADO_CASO_LABELS, type CategoriaAyuda, type EstadoCaso } from '../types/case';
-import { ESTADO_MATCH_LABELS, type EstadoMatch } from '../types/match';
+import { ESTADO_MATCH_LABELS, ESTADO_MATCH_PIPELINE, type Coincidencia, type EstadoMatch } from '../types/match';
 
 const PRIORIDAD_COLOR = { alta: '#DC2626', media: '#D97706', regular: '#78716C' } as const;
 const PRIORIDAD_LABEL = { alta: 'Alta', media: 'Media', regular: 'Regular' } as const;
+const ESTADO_CASO_COLOR: Record<EstadoCaso, string> = { pendiente: '#97A3AA', en_verificacion: '#F5A623', verificado: '#0E9488', atendido: '#1B3556' };
 
 const DIAS_TENDENCIA = 14;
+
+// Funnel acumulativo: una coincidencia "alcanza" una etapa una vez que avanzó
+// al menos hasta ahí. Las rechazadas quedan fuera — esto muestra el flujo de
+// entrega exitoso, no una auditoría completa (esas se cuentan aparte).
+function pipelineFunnel(matchList: Coincidencia[]): FunnelStage[] {
+  return ESTADO_MATCH_PIPELINE.map((stage, idx) => ({
+    label: ESTADO_MATCH_LABELS[stage],
+    value: matchList.filter((m) => ESTADO_MATCH_PIPELINE.indexOf(m.estado) >= idx).length,
+  }));
+}
 
 export function TableroPage() {
   const { cases } = useCases();
@@ -75,6 +88,16 @@ export function TableroPage() {
     [stats.porPrioridad],
   );
 
+  const casosPorEstadoData: DonutDatum[] = useMemo(
+    () =>
+      (Object.keys(ESTADO_CASO_LABELS) as EstadoCaso[])
+        .map((estado) => ({ label: ESTADO_CASO_LABELS[estado], value: stats.porEstadoCaso[estado] ?? 0, color: ESTADO_CASO_COLOR[estado] }))
+        .filter((d) => d.value > 0),
+    [stats.porEstadoCaso],
+  );
+
+  const rechazadas = useMemo(() => matches.filter((m) => m.estado === 'rechazada').length, [matches]);
+
   const tendenciaData: TrendPoint[] = useMemo(() => {
     const days: TrendPoint[] = [];
     const now = new Date();
@@ -124,26 +147,23 @@ export function TableroPage() {
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="transition-all hover:shadow-md">
-          <p className="mb-2 font-semibold text-stone-900">Casos por estado</p>
-          <ul className="space-y-1 text-sm text-stone-600">
-            {(Object.keys(ESTADO_CASO_LABELS) as EstadoCaso[]).map((estado) => (
-              <li key={estado} className="flex justify-between">
-                <span>{ESTADO_CASO_LABELS[estado]}</span>
-                <span>{stats.porEstadoCaso[estado] ?? 0}</span>
-              </li>
-            ))}
-          </ul>
+          <p className="mb-4 font-semibold text-stone-900">Casos por estado</p>
+          {casosPorEstadoData.length > 0 ? <DonutChart data={casosPorEstadoData} size={110} strokeWidth={16} /> : <p className="text-sm text-stone-400">Aún no hay casos registrados.</p>}
         </Card>
         <Card className="transition-all hover:shadow-md">
-          <p className="mb-2 font-semibold text-stone-900">Coincidencias por estado</p>
-          <ul className="space-y-1 text-sm text-stone-600">
-            {(Object.keys(ESTADO_MATCH_LABELS) as EstadoMatch[]).map((estado) => (
-              <li key={estado} className="flex justify-between">
-                <span>{ESTADO_MATCH_LABELS[estado]}</span>
-                <span>{stats.porEstadoMatch[estado] ?? 0}</span>
-              </li>
-            ))}
-          </ul>
+          <p className="mb-4 font-semibold text-stone-900">Coincidencias por etapa</p>
+          {matches.length > 0 ? (
+            <>
+              <Funnel stages={pipelineFunnel(matches)} />
+              {rechazadas > 0 && (
+                <p className="mt-3 text-xs text-stone-500">
+                  + <span className="font-semibold text-stone-700">{rechazadas}</span> rechazada{rechazadas === 1 ? '' : 's'} (fuera del flujo de entrega)
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-stone-400">Aún no hay coincidencias registradas.</p>
+          )}
         </Card>
       </div>
 
