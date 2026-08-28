@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogoutIcon } from './icons';
+import { LogoutIcon, ShieldCheckIcon } from './icons';
 import type { UserRole } from '../types/user';
 
 const LINKS_BY_ROLE: Record<UserRole, { to: string; label: string }[]> = {
@@ -96,6 +96,10 @@ export function NavBar() {
           </div>
           <span className="hidden text-sm font-medium text-stone-700 sm:inline">{displayName}</span>
         </div>
+
+        <NavLink to="/seguridad" aria-label="Seguridad de tu cuenta" className="text-stone-400 hover:text-stone-700">
+          <ShieldCheckIcon width={19} height={19} />
+        </NavLink>
 
         <button type="button" onClick={handleLogout} aria-label="Cerrar sesión" className="text-stone-400 hover:text-stone-700">
           <LogoutIcon />

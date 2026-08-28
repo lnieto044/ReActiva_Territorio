@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AuthInput } from '../components/AuthField';
-import { MailIcon, LockIcon } from '../components/icons';
+import { MailIcon, LockIcon, ShieldCheckIcon } from '../components/icons';
 import { validacionEsProps } from '../lib/validationEs';
+import { esErrorRequiereSegundoFactor, resolverDesdeError, completarInicioSesionTotp, type MultiFactorResolver } from '../lib/mfa';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -13,6 +14,13 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [mfaResolver, setMfaResolver] = useState<MultiFactorResolver | null>(null);
+  const [mfaCode, setMfaCode] = useState('');
+
+  function irADestino() {
+    const from = (location.state as { from?: string } | null)?.from ?? '/panel';
+    navigate(from, { replace: true });
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -20,10 +28,28 @@ export function LoginPage() {
     setSubmitting(true);
     try {
       await login(email, password);
-      const from = (location.state as { from?: string } | null)?.from ?? '/panel';
-      navigate(from, { replace: true });
+      irADestino();
+    } catch (err) {
+      if (esErrorRequiereSegundoFactor(err)) {
+        setMfaResolver(resolverDesdeError(err));
+      } else {
+        setError('Correo o contraseña incorrectos.');
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleMfaSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!mfaResolver) return;
+    setError('');
+    setSubmitting(true);
+    try {
+      await completarInicioSesionTotp(mfaResolver, mfaCode);
+      irADestino();
     } catch {
-      setError('Correo o contraseña incorrectos.');
+      setError('Código incorrecto. Revisa la hora de tu dispositivo e intenta de nuevo.');
     } finally {
       setSubmitting(false);
     }
@@ -64,61 +90,117 @@ export function LoginPage() {
       </div>
 
       <div className="flex w-full items-center justify-center p-8 lg:w-[56%] lg:p-16">
-        <form onSubmit={handleSubmit} className="w-full max-w-[380px]" {...validacionEsProps}>
-          <h2 style={{ fontSize: 26, fontWeight: 800 }}>Bienvenido de nuevo</h2>
-          <p style={{ marginTop: 8, marginBottom: 24, fontSize: 14, color: '#647079' }}>Ingresa a tu cuenta para continuar coordinando la recuperación.</p>
+        {mfaResolver ? (
+          <form onSubmit={handleMfaSubmit} className="w-full max-w-[380px]" {...validacionEsProps}>
+            <div
+              className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
+              style={{ background: '#EAF6F4', color: '#0B7C72' }}
+            >
+              <ShieldCheckIcon width={24} height={24} />
+            </div>
+            <h2 style={{ fontSize: 26, fontWeight: 800 }}>Verificación en dos pasos</h2>
+            <p style={{ marginTop: 8, marginBottom: 24, fontSize: 14, color: '#647079' }}>
+              Abre tu app de autenticación (Google Authenticator u otra) e ingresa el código de 6 dígitos para {email}.
+            </p>
 
-          {error && <p style={{ marginBottom: 16, fontSize: 13, color: '#B3261E', fontWeight: 600 }}>{error}</p>}
+            {error && <p style={{ marginBottom: 16, fontSize: 13, color: '#B3261E', fontWeight: 600 }}>{error}</p>}
 
-          <div style={{ marginBottom: 18 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Correo electrónico</label>
-            <AuthInput
-              icon={MailIcon}
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="nombre@organizacion.org"
-            />
-          </div>
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Código de verificación</label>
+              <AuthInput
+                icon={ShieldCheckIcon}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                required
+                autoFocus
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ''))}
+                placeholder="123456"
+                style={{ letterSpacing: 4, fontWeight: 700 }}
+              />
+            </div>
 
-          <div style={{ marginBottom: 10 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Contraseña</label>
-            <AuthInput
-              icon={LockIcon}
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
-          </div>
+            <button
+              type="submit"
+              disabled={submitting || mfaCode.length !== 6}
+              className="transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-60"
+              style={{ width: '100%', padding: 13, border: 'none', borderRadius: 10, background: '#0E9488', color: '#FFFFFF', fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: 15, cursor: 'pointer', boxShadow: '0 10px 20px rgba(14,148,136,0.28)' }}
+            >
+              {submitting ? 'Verificando…' : 'Confirmar e ingresar'}
+            </button>
 
-          <div style={{ textAlign: 'right', marginBottom: 24 }}>
-            <Link to="/forgot-password" style={{ fontSize: 13, fontWeight: 600, color: '#0B7C72' }}>
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </div>
+            <button
+              type="button"
+              onClick={() => {
+                setMfaResolver(null);
+                setMfaCode('');
+                setError('');
+              }}
+              className="mt-4 w-full text-center text-sm font-semibold"
+              style={{ color: '#647079', background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              ← Volver
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleSubmit} className="w-full max-w-[380px]" {...validacionEsProps}>
+            <h2 style={{ fontSize: 26, fontWeight: 800 }}>Bienvenido de nuevo</h2>
+            <p style={{ marginTop: 8, marginBottom: 24, fontSize: 14, color: '#647079' }}>Ingresa a tu cuenta para continuar coordinando la recuperación.</p>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-60"
-            style={{ width: '100%', padding: 13, border: 'none', borderRadius: 10, background: '#0E9488', color: '#FFFFFF', fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: 15, cursor: 'pointer', boxShadow: '0 10px 20px rgba(14,148,136,0.28)' }}
-          >
-            {submitting ? 'Ingresando…' : 'Iniciar sesión'}
-          </button>
+            {error && <p style={{ marginBottom: 16, fontSize: 13, color: '#B3261E', fontWeight: 600 }}>{error}</p>}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '28px 0' }}>
-            <div style={{ flex: 1, height: 1, background: '#E2E5E4' }} />
-            <span style={{ fontSize: 12, color: '#97A3AA' }}>o</span>
-            <div style={{ flex: 1, height: 1, background: '#E2E5E4' }} />
-          </div>
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Correo electrónico</label>
+              <AuthInput
+                icon={MailIcon}
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="nombre@organizacion.org"
+              />
+            </div>
 
-          <p style={{ textAlign: 'center', fontSize: 14, color: '#647079' }}>
-            ¿No tienes cuenta? <Link to="/registro" style={{ fontWeight: 700, color: '#0B7C72' }}>Regístrate</Link>
-          </p>
-        </form>
+            <div style={{ marginBottom: 10 }}>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Contraseña</label>
+              <AuthInput
+                icon={LockIcon}
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </div>
+
+            <div style={{ textAlign: 'right', marginBottom: 24 }}>
+              <Link to="/forgot-password" style={{ fontSize: 13, fontWeight: 600, color: '#0B7C72' }}>
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="transition-transform duration-150 hover:-translate-y-0.5 disabled:opacity-60"
+              style={{ width: '100%', padding: 13, border: 'none', borderRadius: 10, background: '#0E9488', color: '#FFFFFF', fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: 15, cursor: 'pointer', boxShadow: '0 10px 20px rgba(14,148,136,0.28)' }}
+            >
+              {submitting ? 'Ingresando…' : 'Iniciar sesión'}
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '28px 0' }}>
+              <div style={{ flex: 1, height: 1, background: '#E2E5E4' }} />
+              <span style={{ fontSize: 12, color: '#97A3AA' }}>o</span>
+              <div style={{ flex: 1, height: 1, background: '#E2E5E4' }} />
+            </div>
+
+            <p style={{ textAlign: 'center', fontSize: 14, color: '#647079' }}>
+              ¿No tienes cuenta? <Link to="/registro" style={{ fontWeight: 700, color: '#0B7C72' }}>Regístrate</Link>
+            </p>
+          </form>
+        )}
       </div>
     </div>
   );

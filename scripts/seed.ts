@@ -33,15 +33,27 @@ const DEMO_ACCOUNTS = [
   { uid: 'demo-admin', email: 'admin@demo.reactiva', password: 'demo1234', displayName: 'Equipo ReActiva' },
 ];
 
+// emailVerified: true porque la inscripción de 2FA (TOTP) exige correo
+// verificado — estas cuentas demo no pasan por el flujo real de clic en un
+// enlace, así que lo marcamos directamente para que la demo de seguridad
+// funcione sin fricción.
 async function ensureAuthUser(account: (typeof DEMO_ACCOUNTS)[number]) {
+  let existe = true;
   try {
     await auth.getUser(account.uid);
   } catch {
+    existe = false;
+  }
+
+  if (existe) {
+    await auth.updateUser(account.uid, { emailVerified: true });
+  } else {
     await auth.createUser({
       uid: account.uid,
       email: account.email,
       password: account.password,
       displayName: account.displayName,
+      emailVerified: true,
     });
   }
 }
