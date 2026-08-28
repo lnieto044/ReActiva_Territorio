@@ -21,11 +21,13 @@ Ecuador y Panamá.
 Firebase real, no una simulación local. Cuentas de prueba abajo, en
 [Cuentas de prueba](#cuentas-de-prueba).
 
-**[docs/demo.mp4](docs/demo.mp4)** — video completo recorriendo la plataforma:
-landing pública, registro/login/recuperar contraseña, los 3 paneles por rol
-con sus gráficas reales, mapa, coincidencias, seguimiento, alertas y
-proyecciones, tablero de resultados, gestión de usuarios, y verificación en
-dos pasos con Google Authenticator.
+**[docs/demo.mp4](docs/demo.mp4)** — video completo narrado (~16 minutos, voz
+generada con Gemini TTS en español) recorriendo la plataforma sin omitir
+nada: landing pública completa, registro/login/recuperar contraseña, los 3
+paneles por rol con sus gráficas reales, reportar afectación offline-first,
+mapa, coincidencias, seguimiento, alertas y proyecciones, verificación en dos
+pasos con Google Authenticator, tablero de resultados y gestión de usuarios —
+explicando qué es cada función y por qué se construyó así.
 
 ## Stack
 
