@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+/* Brand palette lifted from the ReActiva Territorio logo (navy / teal / orange).
+   Redefining Tailwind's built-in emerald and stone scales — rather than inventing
+   new utility names — repaints every existing emerald-* and stone-* class in the
+   app without touching each component. */
+@theme {
+  --color-emerald-50: #EAF6F4;
+  --color-emerald-100: #D3EEEA;
+  --color-emerald-600: #0E9488;
+  --color-emerald-700: #0B7C72;
+  --color-emerald-800: #086259;
+
+  --color-stone-50: #F6F7F6;
+  --color-stone-100: #EEF0F0;
+  --color-stone-200: #E2E5E4;
+  --color-stone-300: #CBD1D3;
+  --color-stone-400: #97A3AA;
+  --color-stone-500: #7C8890;
+  --color-stone-600: #647079;
+  --color-stone-700: #4B565D;
+  --color-stone-800: #29333B;
+  --color-stone-900: #16202B;
+
+  --color-navy-50: #EEF2F6;
+  --color-navy-100: #DDE5EE;
+  --color-navy-600: #24466E;
+  --color-navy-700: #1B3556;
+  --color-navy-800: #142943;
+  --color-navy-900: #10233D;
+
+  --color-brandorange-100: #FDF1DE;
+  --color-brandorange-600: #F5A623;
+  --color-brandorange-800: #9A5B0E;
+}
+
+body {
+  background-color: #F6F7F6;
+  color: #16202B;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Manrope', system-ui, sans-serif;
+}

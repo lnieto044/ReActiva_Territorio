@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /cases/{caseId} {
+      allow read, create, update: if isSignedIn();
+      allow delete: if false;
+    }
+
+    match /offers/{offerId} {
+      allow read, create, update: if isSignedIn();
+      allow delete: if false;
+    }
+
+    match /matches/{matchId} {
+      allow read, create, update: if isSignedIn();
+      allow delete: if false;
+    }
+
+    // Public contact form on the landing page — anyone can submit (no auth
+    // required, visitors aren't logged in yet), only coordination can read.
+    match /contactMessages/{messageId} {
+      allow create: if request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 200
+        && request.resource.data.correo is string
+        && request.resource.data.correo.size() > 0 && request.resource.data.correo.size() < 200
+        && request.resource.data.mensaje is string
+        && request.resource.data.mensaje.size() > 0 && request.resource.data.mensaje.size() < 2000;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+  }
+}
