@@ -10,6 +10,23 @@ en la propuesta:
 4. Relacionar la necesidad con una oferta compatible (reglas simples, sin IA).
 5. Actualizar el caso como atendido y ver el resultado en un tablero.
 
+Está construido sobre un caso real: el sismo de magnitud 7.4 del 10 de agosto
+de 2026 con epicentro en San José del Palmar (Chocó, Colombia), que también
+dejó daños en Quibdó, Cali, Pereira, Manizales y Armenia, y se sintió en
+Ecuador y Panamá.
+
+## 🔗 Demo en vivo
+
+**[reactivaterritorio.web.app](https://reactivaterritorio.web.app)** — proyecto
+Firebase real, no una simulación local. Cuentas de prueba abajo, en
+[Cuentas de prueba](#cuentas-de-prueba).
+
+**[docs/demo.mp4](docs/demo.mp4)** — video completo recorriendo la plataforma:
+landing pública, registro/login/recuperar contraseña, los 3 paneles por rol
+con sus gráficas reales, mapa, coincidencias, seguimiento, alertas y
+proyecciones, tablero de resultados, gestión de usuarios, y verificación en
+dos pasos con Google Authenticator.
+
 ## Stack
 
 React + Vite + TypeScript, Tailwind CSS, Firebase (Auth, Firestore, Storage)
@@ -140,15 +157,6 @@ La priorización (`src/domain/priority.ts`) y el motor de coincidencias
 npm test
 ```
 
-## Conectar credenciales reales más adelante
-
-1. Crea un proyecto en https://console.firebase.google.com y una app web.
-2. Reemplaza los valores `VITE_FIREBASE_*` en `.env.local` con los de tu
-   proyecto y pon `VITE_USE_FIREBASE_EMULATORS=false`.
-3. Despliega las reglas: `npx firebase deploy --only firestore:rules,storage`.
-4. Consigue una clave de Google Maps Platform y ponla en
-   `VITE_GOOGLE_MAPS_API_KEY` (ver guía paso a paso abajo).
-
 ## Configurar `VITE_GOOGLE_MAPS_API_KEY` (mapa real en vez del listado)
 
 Sin esta clave, la pantalla "Mapa" funciona igual pero muestra un listado en
@@ -165,9 +173,10 @@ activar el mapa real:
    API**. Se genera una clave (empieza con `AIza...`).
 5. (Recomendado, no obligatorio para pruebas) Haz clic en la clave recién
    creada → **Restricciones de la aplicación** → "Sitios web" → agrega
-   `http://localhost:5173/*` mientras pruebas localmente, y el dominio real
-   donde despliegues la app más adelante. En **Restricciones de API**,
-   limita la clave a "Maps JavaScript API".
+   `http://localhost:5173/*` mientras pruebas localmente, y tu dominio real
+   una vez publicado (ej. `https://reactivaterritorio.web.app/*`). En
+   **Restricciones de API**, limita la clave a "Maps JavaScript API". El
+   cambio puede tardar unos minutos en aplicarse.
 6. Copia la clave a `.env.local`:
    ```
    VITE_GOOGLE_MAPS_API_KEY=AIzaSy...tu_clave_aqui
@@ -181,65 +190,87 @@ suficiente para un prototipo o demo de hackathon. Si no quieres asociar
 facturación todavía, el modo de listado (sin clave) sigue siendo
 completamente funcional para la demo.
 
-## Desplegar en Render (sitio estático)
+## Desplegar en Firebase Hosting
 
-El proyecto incluye `render.yaml` (Render Blueprint) con todo preconfigurado:
-comando de build, carpeta de publicación y la regla de *rewrite* que hace que
-React Router funcione en producción (sin esa regla, recargar `/panel` o
-`/alertas` daría 404).
+El sitio en vivo (`https://reactivaterritorio.web.app`) corre en **Firebase
+Hosting**, sobre el mismo proyecto real que Auth/Firestore/Storage — un solo
+login, sin depender de un servicio externo aparte. `firebase.json` ya incluye
+la sección `hosting` con la carpeta `dist` y el *rewrite* que hace que React
+Router funcione en producción (sin eso, recargar `/panel` o `/alertas` daría
+404).
 
-**Importante:** el emulador de Firebase solo existe en tu máquina — un sitio
-público en Render no puede conectarse a `127.0.0.1`. Para que login,
-registro y los datos funcionen de verdad para cualquier visitante, el
-deploy necesita un **proyecto Firebase real** (no el de emulador). Pasos:
+**Requisito real de Firebase, no opcional**: Storage exige el plan **Blaze**
+(pago por uso) desde 2024, incluso para uso dentro de la cuota gratuita —
+Spark ya no alcanza. Blaze se mantiene en $0 mientras no superes esa cuota
+(5GB de Storage, 50k MAU de Auth, etc.), pero sí requiere una tarjeta
+registrada en Firebase Console.
 
-1. **Crea el proyecto Firebase real** (una sola vez):
-   - Entra a https://console.firebase.google.com → **Agregar proyecto**.
-   - Dentro del proyecto: **Authentication → Sign-in method → habilita
-     Correo/contraseña**.
-   - **Firestore Database → Crear base de datos** (modo producción, la
-     región más cercana, p. ej. `southamerica-east1`).
-   - **Storage → Comenzar** (modo producción).
+1. **Crea el proyecto Firebase real** (una sola vez), en
+   https://console.firebase.google.com → **Agregar proyecto**:
+   - **Authentication → Sign-in method → habilita Correo/contraseña.**
+   - **Firestore Database → Crear base de datos** (modo producción, Database
+     ID `(default)`, la región que prefieras).
+   - **Storage → Comenzar** (pide subir a Blaze primero si aún estás en
+     Spark).
    - **Configuración del proyecto → tus apps → Web (`</>`)** → registra una
-     app y copia el bloque `firebaseConfig` (apiKey, authDomain, projectId,
-     storageBucket, messagingSenderId, appId) — son valores públicos,
-     normales de compartir/pegar en un cliente web.
-   - Despliega las reglas reales desde tu máquina:
-     ```
-     npx firebase login
-     npx firebase use --add   # elige el proyecto nuevo, alias "default"
-     npx firebase deploy --only firestore:rules,storage
-     ```
-   - Corre `npm run seed` apuntando a ese proyecto (con
-     `VITE_USE_FIREBASE_EMULATORS=false` y las credenciales reales en
-     `.env.local`) para crear las 3 cuentas demo y los casos/ofertas de
-     ejemplo ahí también — si no, el sitio en Render arrancará vacío y sin
-     cuentas para iniciar sesión.
+     app y copia el bloque `firebaseConfig` — son valores públicos, van
+     igual en el navegador de cualquier visitante.
+   - **Configuración del proyecto → Cuentas de servicio → Generar nueva
+     clave privada** → descarga el `.json`. Esta clave tiene acceso total al
+     proyecto — **nunca la subas a git** (el `.gitignore` ya bloquea
+     `*-firebase-adminsdk-*.json` y `serviceAccountKey*.json` por si acaso).
 
-2. **Crea el sitio en Render**:
-   - En https://dashboard.render.com → **New +** → **Blueprint** → conecta
-     el repo `lnieto044/ReActiva_Territorio` → Render detecta `render.yaml`
-     automáticamente.
-   - Te va a pedir el valor de cada variable marcada `sync: false`: pega ahí
-     los 6 valores de `firebaseConfig` del paso anterior
-     (`VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`,
-     `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`,
-     `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`) y,
-     opcional, `VITE_GOOGLE_MAPS_API_KEY`. `VITE_USE_FIREBASE_EMULATORS` ya
-     queda en `false` por el blueprint.
-   - Confirma y espera el build (unos 2-3 minutos). Render te da una URL
-     `https://reactiva-territorio.onrender.com` (o similar) ya funcionando.
-   - Si más adelante habilitas `VITE_GOOGLE_MAPS_API_KEY`, entra a esa clave
-     en Google Cloud Console y agrega el dominio de Render a las
-     restricciones de sitio web (ver sección anterior).
+2. **Con esa clave, todo lo demás se hace por CLI/Admin SDK — sin tocar la
+   consola de Firebase de nuevo**:
 
-Sin proyecto Firebase real, el sitio sí compila y se ve en Render, pero
-login/registro y todas las pantallas con datos quedarán rotos para
-cualquiera que no sea tu máquina de desarrollo — por eso el paso 1 no es
+   ```bash
+   # Reglas de Firestore y Storage
+   GOOGLE_APPLICATION_CREDENTIALS=./tu-clave.json \
+     npx firebase deploy --only firestore:rules,storage --project TU_PROJECT_ID
+
+   # Habilitar 2FA (TOTP) en el proyecto — ver sección de 2FA arriba
+   # (requiere un pequeño script con projectConfigManager().updateProjectConfig(),
+   # no hay botón directo en la consola para esto)
+
+   # Sembrar las 3 cuentas demo + casos/ofertas/coincidencias reales
+   GOOGLE_APPLICATION_CREDENTIALS=./tu-clave.json SEED_TARGET=prod \
+     SEED_PROJECT_ID=TU_PROJECT_ID npx tsx scripts/seed.ts
+
+   # Build apuntando a producción: crea .env.production.local con los 6
+   # valores de firebaseConfig + VITE_USE_FIREBASE_EMULATORS=false
+   # (Vite lo mezcla automáticamente sobre .env.local solo en `vite build`)
+   npx vite build
+
+   # Publicar
+   GOOGLE_APPLICATION_CREDENTIALS=./tu-clave.json \
+     npx firebase deploy --only hosting --project TU_PROJECT_ID
+   ```
+
+   La CLI de Firebase acepta la misma `GOOGLE_APPLICATION_CREDENTIALS` que el
+   Admin SDK — no hace falta `firebase login` interactivo en absoluto.
+
+3. Consigue una clave de Google Maps Platform (ver sección anterior) y
+   restríngela a tu dominio real de Hosting una vez publicado.
+
+Sin proyecto Firebase real, el sitio compila igual, pero login/registro y
+todas las pantallas con datos quedan rotos para cualquiera que no sea tu
+máquina de desarrollo con el emulador corriendo — por eso el paso 1 no es
 opcional para un deploy público.
+
+## Aviso de privacidad
+
+La plataforma maneja datos reales de personas en situación de vulnerabilidad
+(nombre, teléfono, ubicación, fotos de evidencia). El texto completo de qué
+se guarda, para qué y cómo pedir corrección/borrado está en
+[`/privacidad`](https://reactivaterritorio.web.app/privacidad) — enlazado
+desde el pie de la landing y del panel autenticado.
 
 ## Fuera de alcance en este MVP
 
 Compra Local, empleo para la reconstrucción, analítica con BigQuery/Looker,
 clasificación con Gemini/Vertex AI y notificaciones push quedan planteados
-como evolución del producto, no incluidos en este prototipo.
+como evolución del producto, no incluidos en este prototipo. Tampoco incluye
+(por ahora): exportar reportes a PDF/CSV desde el Tablero, code-splitting del
+bundle (Vite avisa que pesa ~1MB — funciona bien igual, es una optimización
+pendiente) y una app instalable (PWA) más allá de la persistencia offline de
+Firestore ya implementada.
