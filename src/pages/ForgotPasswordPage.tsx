@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AuthInput } from '../components/AuthField';
 import { MailIcon } from '../components/icons';
+import { validacionEsProps } from '../lib/validationEs';
 
 export function ForgotPasswordPage() {
   const { forgotPassword } = useAuth();
@@ -83,7 +84,7 @@ export function ForgotPasswordPage() {
               </Link>
             </>
           ) : (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} {...validacionEsProps}>
               <h2 style={{ fontSize: 26, fontWeight: 800 }}>¿Olvidaste tu contraseña?</h2>
               <p style={{ marginTop: 8, marginBottom: 24, fontSize: 14, color: '#647079' }}>
                 Escribe tu correo y te enviamos un enlace para recuperar el acceso.

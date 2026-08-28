@@ -155,6 +155,63 @@ suficiente para un prototipo o demo de hackathon. Si no quieres asociar
 facturación todavía, el modo de listado (sin clave) sigue siendo
 completamente funcional para la demo.
 
+## Desplegar en Render (sitio estático)
+
+El proyecto incluye `render.yaml` (Render Blueprint) con todo preconfigurado:
+comando de build, carpeta de publicación y la regla de *rewrite* que hace que
+React Router funcione en producción (sin esa regla, recargar `/panel` o
+`/alertas` daría 404).
+
+**Importante:** el emulador de Firebase solo existe en tu máquina — un sitio
+público en Render no puede conectarse a `127.0.0.1`. Para que login,
+registro y los datos funcionen de verdad para cualquier visitante, el
+deploy necesita un **proyecto Firebase real** (no el de emulador). Pasos:
+
+1. **Crea el proyecto Firebase real** (una sola vez):
+   - Entra a https://console.firebase.google.com → **Agregar proyecto**.
+   - Dentro del proyecto: **Authentication → Sign-in method → habilita
+     Correo/contraseña**.
+   - **Firestore Database → Crear base de datos** (modo producción, la
+     región más cercana, p. ej. `southamerica-east1`).
+   - **Storage → Comenzar** (modo producción).
+   - **Configuración del proyecto → tus apps → Web (`</>`)** → registra una
+     app y copia el bloque `firebaseConfig` (apiKey, authDomain, projectId,
+     storageBucket, messagingSenderId, appId) — son valores públicos,
+     normales de compartir/pegar en un cliente web.
+   - Despliega las reglas reales desde tu máquina:
+     ```
+     npx firebase login
+     npx firebase use --add   # elige el proyecto nuevo, alias "default"
+     npx firebase deploy --only firestore:rules,storage
+     ```
+   - Corre `npm run seed` apuntando a ese proyecto (con
+     `VITE_USE_FIREBASE_EMULATORS=false` y las credenciales reales en
+     `.env.local`) para crear las 3 cuentas demo y los casos/ofertas de
+     ejemplo ahí también — si no, el sitio en Render arrancará vacío y sin
+     cuentas para iniciar sesión.
+
+2. **Crea el sitio en Render**:
+   - En https://dashboard.render.com → **New +** → **Blueprint** → conecta
+     el repo `lnieto044/ReActiva_Territorio` → Render detecta `render.yaml`
+     automáticamente.
+   - Te va a pedir el valor de cada variable marcada `sync: false`: pega ahí
+     los 6 valores de `firebaseConfig` del paso anterior
+     (`VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`,
+     `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`,
+     `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`) y,
+     opcional, `VITE_GOOGLE_MAPS_API_KEY`. `VITE_USE_FIREBASE_EMULATORS` ya
+     queda en `false` por el blueprint.
+   - Confirma y espera el build (unos 2-3 minutos). Render te da una URL
+     `https://reactiva-territorio.onrender.com` (o similar) ya funcionando.
+   - Si más adelante habilitas `VITE_GOOGLE_MAPS_API_KEY`, entra a esa clave
+     en Google Cloud Console y agrega el dominio de Render a las
+     restricciones de sitio web (ver sección anterior).
+
+Sin proyecto Firebase real, el sitio sí compila y se ve en Render, pero
+login/registro y todas las pantallas con datos quedarán rotos para
+cualquiera que no sea tu máquina de desarrollo — por eso el paso 1 no es
+opcional para un deploy público.
+
 ## Fuera de alcance en este MVP
 
 Compra Local, empleo para la reconstrucción, analítica con BigQuery/Looker,

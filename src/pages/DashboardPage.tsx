@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { useCases } from '../features/cases/api';
 import { useOffers } from '../features/offers/api';
 import { useMatches } from '../features/matches/api';
-import { DocPlusIcon, MapPinIcon, LinkMatchIcon, TruckIcon, PackageIcon, BarChartIcon, UsersIcon } from '../components/icons';
+import { DocPlusIcon, MapPinIcon, LinkMatchIcon, TruckIcon, PackageIcon, BarChartIcon, UsersIcon, AlertTriangleIcon } from '../components/icons';
+import { generarAlertas } from '../domain/alerts';
 import { CountUp } from '../components/CountUp';
 import { BarRow, type BarDatum } from '../components/charts/BarRow';
 import { DonutChart, type DonutDatum } from '../components/charts/DonutChart';
@@ -135,21 +136,25 @@ export function DashboardPage() {
     if (role === 'lider_comunitario') {
       const misCasos = cases.filter((c) => c.registradoPor === uid);
       const misCasosIds = new Set(misCasos.map((c) => c.id));
+      const misMatches = matches.filter((m) => misCasosIds.has(m.caseId));
       return [
         { label: 'Casos reportados', value: misCasos.length },
         { label: 'Casos verificados', value: misCasos.filter((c) => c.estado === 'verificado' || c.estado === 'atendido').length },
-        { label: 'Coincidencias activas', value: matches.filter((m) => misCasosIds.has(m.caseId) && m.estado !== 'rechazada' && m.estado !== 'cerrada').length },
+        { label: 'Coincidencias activas', value: misMatches.filter((m) => m.estado !== 'rechazada' && m.estado !== 'cerrada').length },
         { label: 'Negocios reactivados', value: misCasos.filter((c) => c.estado === 'atendido' && c.tipoAfectacion === 'negocio').length },
+        { label: 'Alertas activas', value: generarAlertas(misCasos, [], misMatches).length },
       ];
     }
     if (role === 'organizacion') {
       const misOfertas = offers.filter((o) => o.registradoPor === uid);
       const misOfertasIds = new Set(misOfertas.map((o) => o.id));
+      const misMatches = matches.filter((m) => misOfertasIds.has(m.offerId));
       return [
         { label: 'Ofertas activas', value: misOfertas.filter((o) => o.estado === 'disponible' || o.estado === 'parcialmente_asignada').length },
-        { label: 'Coincidencias en curso', value: matches.filter((m) => misOfertasIds.has(m.offerId) && m.estado !== 'rechazada' && m.estado !== 'cerrada').length },
-        { label: 'Entregas completadas', value: matches.filter((m) => misOfertasIds.has(m.offerId) && ['entregada', 'verificada', 'cerrada'].includes(m.estado)).length },
+        { label: 'Coincidencias en curso', value: misMatches.filter((m) => m.estado !== 'rechazada' && m.estado !== 'cerrada').length },
+        { label: 'Entregas completadas', value: misMatches.filter((m) => ['entregada', 'verificada', 'cerrada'].includes(m.estado)).length },
         { label: 'Recursos movilizados', value: misOfertas.reduce((total, o) => total + o.cantidadAsignada, 0) },
+        { label: 'Alertas activas', value: generarAlertas([], misOfertas, misMatches).length },
       ];
     }
     // admin
@@ -157,6 +162,7 @@ export function DashboardPage() {
     return [
       { label: 'Casos totales', value: cases.length },
       { label: 'Casos verificados', value: cases.filter((c) => c.estado === 'verificado' || c.estado === 'atendido').length },
+      { label: 'Alertas activas', value: generarAlertas(cases, offers, matches).length },
       { label: 'Negocios reactivados', value: cases.filter((c) => c.estado === 'atendido' && c.tipoAfectacion === 'negocio').length },
       { label: 'Ofertas activas', value: offers.filter((o) => o.estado === 'disponible' || o.estado === 'parcialmente_asignada').length },
       { label: 'Municipios activos', value: municipios.size },
@@ -312,10 +318,11 @@ export function DashboardPage() {
     const seguimiento: ModuleDef = { to: '/seguimiento', title: 'Seguimiento de entregas', description: 'Da seguimiento y registra evidencia de cada entrega.', icon: <TruckIcon width={22} height={22} /> };
     const tablero: ModuleDef = { to: '/tablero', title: 'Tablero de resultados', description: 'Indicadores de recuperación en tiempo real.', icon: <BarChartIcon width={22} height={22} />, accent: 'orange' };
     const usuarios: ModuleDef = { to: '/usuarios', title: 'Gestión de usuarios', description: 'Administra las cuentas registradas y sus roles.', icon: <UsersIcon width={22} height={22} />, accent: 'orange' };
+    const alertas: ModuleDef = { to: '/alertas', title: 'Alertas y proyecciones', description: 'Casos urgentes, ofertas por agotarse y ritmo de verificación.', icon: <AlertTriangleIcon width={22} height={22} />, accent: 'orange' };
 
-    if (role === 'lider_comunitario') return [reportar, mapa, coincidencias, seguimiento];
-    if (role === 'organizacion') return [ofertasPublicar, ofertasActivas, coincidencias, seguimiento];
-    return [reportar, mapa, ofertasPublicar, coincidencias, seguimiento, tablero, usuarios];
+    if (role === 'lider_comunitario') return [reportar, mapa, coincidencias, seguimiento, alertas];
+    if (role === 'organizacion') return [ofertasPublicar, ofertasActivas, coincidencias, seguimiento, alertas];
+    return [reportar, mapa, ofertasPublicar, coincidencias, seguimiento, alertas, tablero, usuarios];
   }, [role]);
 
   const greeting = role === 'organizacion' ? `Hola, ${displayName}` : role === 'admin' ? 'Panel de coordinación' : `Hola, ${displayName}`;

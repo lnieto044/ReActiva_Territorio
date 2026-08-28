@@ -5,6 +5,7 @@ import { sendContactMessage } from '../features/contact/api';
 import { HeroCarousel } from '../components/HeroCarousel';
 import { Reveal } from '../components/Reveal';
 import { AuthInput, AuthTextArea } from '../components/AuthField';
+import { validacionEsProps } from '../lib/validationEs';
 import {
   DocPlusIcon,
   ShieldCheckIcon,
@@ -163,7 +164,7 @@ function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} className="w-full" {...validacionEsProps}>
       {error && <p className="mb-4 text-sm font-semibold" style={{ color: '#B3261E' }}>{error}</p>}
       <div className="mb-4">
         <label className="mb-1.5 block text-sm font-semibold" style={{ color: '#16202B' }}>Nombre</label>
@@ -481,25 +482,24 @@ export function LandingPage() {
                 Entidades, empresas y líderes comunitarios pueden escribirnos para vincularse a la plataforma.
               </p>
 
-              {/* Placeholders — replace with real contact details before presenting */}
               <div className="relative mt-8 space-y-4">
-                <div className="flex items-center gap-3 text-sm text-white/85">
+                <a href="mailto:info@saludgo.org" className="flex items-center gap-3 text-sm text-white/85 transition-colors hover:text-white">
                   <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg" style={{ background: 'rgba(255,255,255,0.1)' }}>
                     <MailIcon width={16} height={16} />
                   </span>
-                  [correo de contacto]
-                </div>
-                <div className="flex items-center gap-3 text-sm text-white/85">
+                  info@saludgo.org
+                </a>
+                <a href="tel:+573133898638" className="flex items-center gap-3 text-sm text-white/85 transition-colors hover:text-white">
                   <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg" style={{ background: 'rgba(255,255,255,0.1)' }}>
                     <PhoneIcon width={16} height={16} />
                   </span>
-                  [teléfono / WhatsApp]
-                </div>
+                  +57 313 389 8638
+                </a>
                 <div className="flex items-center gap-3 text-sm text-white/85">
                   <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg" style={{ background: 'rgba(255,255,255,0.1)' }}>
                     <MapPinIcon width={16} height={16} />
                   </span>
-                  Chocó, Colombia
+                  Bogotá D.C., Colombia
                 </div>
               </div>
 

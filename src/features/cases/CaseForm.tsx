@@ -5,6 +5,7 @@ import { CATEGORIA_LABELS, type CategoriaAyuda } from '../../types/case';
 import { useAuth } from '../../context/AuthContext';
 import { createCase, type CaseFormValues } from './api';
 import { PhotoUploader } from './PhotoUploader';
+import { validacionEsProps } from '../../lib/validationEs';
 import {
   UserIcon,
   PhoneIcon,
@@ -91,7 +92,7 @@ export function CaseForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6" {...validacionEsProps}>
       <Card className="space-y-4 transition-shadow hover:shadow-md">
         <h2 className="text-lg font-semibold text-stone-900">Datos del afectado</h2>
         <IconField label="Nombre del afectado o negocio" icon={UserIcon}>

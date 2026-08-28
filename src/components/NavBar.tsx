@@ -10,12 +10,14 @@ const LINKS_BY_ROLE: Record<UserRole, { to: string; label: string }[]> = {
     { to: '/mapa', label: 'Mapa' },
     { to: '/coincidencias', label: 'Coincidencias' },
     { to: '/seguimiento', label: 'Seguimiento' },
+    { to: '/alertas', label: 'Alertas' },
   ],
   organizacion: [
     { to: '/panel', label: 'Panel' },
     { to: '/ofertas', label: 'Ofertas' },
     { to: '/coincidencias', label: 'Coincidencias' },
     { to: '/seguimiento', label: 'Seguimiento' },
+    { to: '/alertas', label: 'Alertas' },
   ],
   admin: [
     { to: '/panel', label: 'Panel' },
@@ -24,6 +26,7 @@ const LINKS_BY_ROLE: Record<UserRole, { to: string; label: string }[]> = {
     { to: '/ofertas', label: 'Ofertas' },
     { to: '/coincidencias', label: 'Coincidencias' },
     { to: '/seguimiento', label: 'Seguimiento' },
+    { to: '/alertas', label: 'Alertas' },
     { to: '/tablero', label: 'Tablero' },
     { to: '/usuarios', label: 'Usuarios' },
   ],

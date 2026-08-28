@@ -4,6 +4,7 @@ import { Timestamp } from 'firebase/firestore';
 import { storage } from '../../lib/firebase';
 import { Button, Field, Input, TextArea } from '../../components/ui';
 import type { Evidencia } from '../../types/match';
+import { validacionEsProps } from '../../lib/validationEs';
 
 export function EvidenceForm({
   matchId,
@@ -52,7 +53,7 @@ export function EvidenceForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border border-stone-200 p-4">
+    <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border border-stone-200 p-4" {...validacionEsProps}>
       <p className="text-sm font-semibold text-stone-800">Registrar evidencia de entrega</p>
       <Field label="Responsable de la entrega">
         <Input required value={responsable} onChange={(e) => setResponsable(e.target.value)} />

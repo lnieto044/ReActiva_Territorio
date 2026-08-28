@@ -5,6 +5,7 @@ import { MEDIO_ENTREGA_LABELS, type MedioEntrega } from '../../types/offer';
 import { useAuth } from '../../context/AuthContext';
 import { createOffer, type OfferFormValues } from './api';
 import { BoxIcon, MessageIcon, HashIcon, ClipboardIcon, MapPinIcon, BuildingIcon, TruckIcon, ClockIcon } from '../../components/icons';
+import { validacionEsProps } from '../../lib/validationEs';
 
 const CATEGORIAS = Object.keys(CATEGORIA_LABELS) as CategoriaAyuda[];
 const MEDIOS = Object.keys(MEDIO_ENTREGA_LABELS) as MedioEntrega[];
@@ -49,7 +50,7 @@ export function OfferForm({ onCreated }: { onCreated?: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} {...validacionEsProps}>
       <Card className="space-y-4 transition-shadow hover:shadow-md">
         <h2 className="text-lg font-semibold text-stone-900">Publicar una oferta</h2>
         <IconField label="Tipo de recurso" icon={BoxIcon}>

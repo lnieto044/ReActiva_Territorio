@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { verifyResetCode, confirmNewPassword } from '../lib/firebase';
 import { AuthInput } from '../components/AuthField';
 import { LockIcon } from '../components/icons';
+import { validacionEsProps } from '../lib/validationEs';
 
 type Status = 'checking' | 'valid' | 'invalid' | 'done';
 
@@ -126,7 +127,7 @@ export function ResetPasswordPage() {
           )}
 
           {status === 'valid' && (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} {...validacionEsProps}>
               <h2 style={{ fontSize: 26, fontWeight: 800 }}>Elige una nueva contraseña</h2>
               <p style={{ marginTop: 8, marginBottom: 24, fontSize: 14, color: '#647079' }}>
                 Para la cuenta <strong>{email}</strong>.

@@ -17,6 +17,7 @@ import { CoincidenciasPage } from './pages/CoincidenciasPage';
 import { SeguimientoListPage, SeguimientoDetallePage } from './pages/SeguimientoPage';
 import { TableroPage } from './pages/TableroPage';
 import { GestionUsuariosPage } from './pages/GestionUsuariosPage';
+import { AlertasPage } from './pages/AlertasPage';
 
 function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -123,6 +124,16 @@ export function App() {
           <RequireAuth>
             <AppShell>
               <TableroPage />
+            </AppShell>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/alertas"
+        element={
+          <RequireAuth>
+            <AppShell>
+              <AlertasPage />
             </AppShell>
           </RequireAuth>
         }

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { ShieldCheckIcon, BuildingIcon, UserIcon, MapPinIcon, MailIcon, LockIcon } from '../components/icons';
 import { AuthInput } from '../components/AuthField';
 import type { UserRole } from '../types/user';
+import { validacionEsProps } from '../lib/validationEs';
 
 export function RegisterPage() {
   const { register } = useAuth();
@@ -78,7 +79,7 @@ export function RegisterPage() {
       </div>
 
       <div className="flex w-full items-center justify-center p-8 lg:w-[62%] lg:p-14">
-        <form onSubmit={handleSubmit} className="w-full max-w-[520px]">
+        <form onSubmit={handleSubmit} className="w-full max-w-[520px]" {...validacionEsProps}>
           <h2 style={{ fontSize: 26, fontWeight: 800 }}>Crea tu cuenta</h2>
           <p style={{ marginTop: 8, marginBottom: 22, fontSize: 14, color: '#647079' }}>Regístrate para reportar afectaciones o publicar ayudas disponibles.</p>
 

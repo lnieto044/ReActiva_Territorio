@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AuthInput } from '../components/AuthField';
 import { MailIcon, LockIcon } from '../components/icons';
+import { validacionEsProps } from '../lib/validationEs';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -63,7 +64,7 @@ export function LoginPage() {
       </div>
 
       <div className="flex w-full items-center justify-center p-8 lg:w-[56%] lg:p-16">
-        <form onSubmit={handleSubmit} className="w-full max-w-[380px]">
+        <form onSubmit={handleSubmit} className="w-full max-w-[380px]" {...validacionEsProps}>
           <h2 style={{ fontSize: 26, fontWeight: 800 }}>Bienvenido de nuevo</h2>
           <p style={{ marginTop: 8, marginBottom: 24, fontSize: 14, color: '#647079' }}>Ingresa a tu cuenta para continuar coordinando la recuperación.</p>
 
