@@ -21,6 +21,10 @@ Ecuador y Panamá.
 Firebase real, no una simulación local. Cuentas de prueba abajo, en
 [Cuentas de prueba](#cuentas-de-prueba).
 
+**[docs/slides.html](docs/slides.html)** — diapositivas de presentación en
+vivo para el jurado (abre el archivo en cualquier navegador, navega con las
+flechas ← →).
+
 **[docs/pitch.mp4](docs/pitch.mp4)** — pitch corto (~2 minutos, dentro del
 límite de presentación): el problema real, la solución, y highlights de la
 plataforma funcionando, con fotos reales del sismo y narración en español.

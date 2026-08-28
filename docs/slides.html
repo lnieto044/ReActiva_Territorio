@@ -1,0 +1,300 @@
+<title>ReActiva Territorio — Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-900: #0B1626;
+    --navy-800: #10233D;
+    --navy-700: #1B3556;
+    --teal-600: #0E9488;
+    --teal-500: #14B8A8;
+    --amber-500: #F5A623;
+    --paper: #F7F8F7;
+    --ink: #16202B;
+    --ink-soft: #4B565D;
+    --line: #E2E5E4;
+    --card: #FFFFFF;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: var(--navy-900);
+      --ink: #F3F6F5;
+      --ink-soft: #9FB0AE;
+      --line: rgba(255,255,255,0.12);
+      --card: rgba(255,255,255,0.05);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: var(--navy-900);
+    --ink: #F3F6F5;
+    --ink-soft: #9FB0AE;
+    --line: rgba(255,255,255,0.12);
+    --card: rgba(255,255,255,0.05);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Work Sans', system-ui, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+  h1, h2, h3, .display { font-family: 'Manrope', system-ui, sans-serif; text-wrap: balance; }
+
+  #deck { position: relative; height: 100vh; width: 100vw; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(32px, 6vw, 96px) clamp(32px, 8vw, 140px);
+    opacity: 0; visibility: hidden;
+    transform: translateY(14px);
+    transition: opacity 420ms ease, transform 420ms ease, visibility 0s linear 420ms;
+  }
+  .slide.active {
+    opacity: 1; visibility: visible; transform: translateY(0);
+    transition: opacity 420ms ease, transform 420ms ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .slide { transition: opacity 200ms linear, visibility 0s; transform: none; }
+  }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Work Sans', sans-serif; font-weight: 600; font-size: 13px;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal-500);
+    margin-bottom: 18px;
+  }
+  .eyebrow .n {
+    font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 13px;
+    color: var(--paper); background: var(--teal-600);
+    border-radius: 999px; width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .eyebrow .t { color: var(--ink-soft); font-weight: 500; letter-spacing: 0.02em; }
+
+  .slide h2.big {
+    font-size: clamp(34px, 4.6vw, 62px); font-weight: 800; line-height: 1.05;
+    margin: 0 0 20px 0; color: var(--ink);
+  }
+  .slide p.lead {
+    font-size: clamp(17px, 1.5vw, 22px); line-height: 1.55; color: var(--ink-soft);
+    max-width: 62ch; margin: 0 0 8px 0;
+  }
+  .accent { color: var(--teal-500); }
+
+  .grid2 { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(24px, 4vw, 64px); align-items: center; }
+  @media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .stat-row { display: flex; gap: clamp(20px, 3vw, 48px); margin-top: 28px; flex-wrap: wrap; }
+  .stat { display: flex; flex-direction: column; gap: 4px; }
+  .stat .v { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: clamp(30px, 3.4vw, 46px); color: var(--ink); font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: 14px; color: var(--ink-soft); max-width: 18ch; }
+
+  .flow { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+  .flow-step { display: flex; align-items: flex-start; gap: 16px; }
+  .flow-step .idx {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px;
+    background: var(--card); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 14px; color: var(--teal-500);
+  }
+  .flow-step .body b { color: var(--ink); font-weight: 600; }
+  .flow-step .body span { color: var(--ink-soft); font-size: 15px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    padding: clamp(18px, 2vw, 26px);
+  }
+
+  .tech-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 24px; }
+  @media (max-width: 700px) { .tech-grid { grid-template-columns: 1fr; } }
+  .tech-card { display: flex; gap: 14px; align-items: flex-start; }
+  .tech-card .dot { width: 10px; height: 10px; border-radius: 999px; background: var(--teal-500); margin-top: 8px; flex-shrink: 0; }
+  .tech-card b { color: var(--ink); font-weight: 600; display: block; font-size: 16px; }
+  .tech-card span { color: var(--ink-soft); font-size: 14px; }
+
+  .url-box {
+    display: inline-flex; align-items: center; gap: 14px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 24px; margin-top: 22px;
+  }
+  .url-box .dotpulse { width: 10px; height: 10px; border-radius: 999px; background: var(--teal-500); animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @media (prefers-reduced-motion: reduce) { .dotpulse { animation: none; } }
+  .url-box code { font-family: 'Work Sans', sans-serif; font-weight: 600; font-size: 18px; color: var(--ink); }
+
+  .hero-slide { justify-content: center; align-items: flex-start; background:
+    radial-gradient(ellipse 900px 500px at 15% 20%, rgba(14,148,136,0.16), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 85% 80%, rgba(245,166,35,0.10), transparent 60%);
+  }
+  .hero-kicker { font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-size: 13px; color: var(--amber-500); margin-bottom: 22px; }
+  .hero-slide h1 {
+    font-size: clamp(44px, 7vw, 92px); font-weight: 800; line-height: 1.0; margin: 0;
+    color: var(--ink);
+  }
+  .hero-slide h1 span { color: var(--teal-500); }
+  .hero-slide .sub { margin-top: 26px; font-size: clamp(18px, 1.6vw, 24px); color: var(--ink-soft); max-width: 46ch; line-height: 1.5; }
+
+  .close-slide { align-items: flex-start; }
+  .close-slide .ask { margin-top: 30px; display: flex; gap: 40px; flex-wrap: wrap; }
+  .close-slide .ask div b { display:block; color: var(--ink); font-family:'Manrope',sans-serif; font-weight:800; font-size: 20px; }
+  .close-slide .ask div span { color: var(--ink-soft); font-size: 14px; }
+
+  nav#dots {
+    position: fixed; right: clamp(20px, 3vw, 40px); top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 12px; z-index: 20;
+  }
+  nav#dots button {
+    width: 9px; height: 9px; border-radius: 999px; border: none; padding: 0;
+    background: var(--line); cursor: pointer; transition: background 200ms, transform 200ms;
+  }
+  nav#dots button.active { background: var(--teal-500); transform: scale(1.4); }
+  nav#dots button:focus-visible { outline: 2px solid var(--teal-500); outline-offset: 3px; }
+
+  #progress {
+    position: fixed; bottom: 0; left: 0; height: 3px; background: var(--teal-600);
+    transition: width 300ms ease; z-index: 20;
+  }
+
+  .hint {
+    position: fixed; left: clamp(20px, 3vw, 40px); bottom: 22px; z-index: 20;
+    font-size: 12.5px; color: var(--ink-soft); display: flex; align-items: center; gap: 8px;
+    font-family: 'Work Sans', sans-serif;
+  }
+  .hint kbd {
+    font-family: 'Work Sans', sans-serif; font-size: 11px; border: 1px solid var(--line);
+    border-radius: 5px; padding: 2px 6px; color: var(--ink-soft);
+  }
+
+  .clickzone { position: fixed; top: 0; bottom: 0; width: 14%; z-index: 10; cursor: pointer; background: transparent; }
+  .clickzone.left { left: 0; }
+  .clickzone.right { right: 0; }
+
+  .brandmark { position: fixed; left: clamp(20px, 3vw, 40px); top: 22px; z-index: 20; display: flex; align-items: center; gap: 9px; }
+  .brandmark .sq { width: 20px; height: 20px; border-radius: 6px; background: var(--teal-600); }
+  .brandmark span { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 13px; letter-spacing: 0.02em; color: var(--ink-soft); }
+</style>
+
+<div id="deck">
+
+  <section class="slide hero-slide active" data-slide="0">
+    <div class="hero-kicker">Hackatón · Pitch de proyecto</div>
+    <h1>Reactiva<br><span>Territorio</span></h1>
+    <p class="sub">Convierte los reportes de una comunidad tras un sismo en recuperación verificable — de principio a fin.</p>
+  </section>
+
+  <section class="slide" data-slide="1">
+    <div class="eyebrow"><span class="n">1</span><span class="t">Problema · 0:00–0:30</span></div>
+    <h2 class="big">El sismo del 10 de agosto de 2026 <span class="accent">no falló por falta de ayuda.</span></h2>
+    <p class="lead">Falló por falta de coordinación. Un sismo de magnitud 7.4 con epicentro en Chocó dejó daños en Quibdó, Cali, Pereira, Manizales y Armenia.</p>
+    <div class="flow" style="margin-top:26px;">
+      <div class="flow-step"><div class="idx">→</div><div class="body"><b>Reportes perdidos</b> <span>en WhatsApp y hojas sueltas, sin verificar.</span></div></div>
+      <div class="flow-step"><div class="idx">→</div><div class="body"><b>Ayuda mal dirigida</b> <span>que no llega a quien más la necesita primero.</span></div></div>
+      <div class="flow-step"><div class="idx">→</div><div class="body"><b>Nadie mide el resultado</b> <span>— no hay forma de confirmar si un caso quedó atendido.</span></div></div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="2">
+    <div class="eyebrow"><span class="n">2</span><span class="t">Solución · 0:30–1:00</span></div>
+    <h2 class="big">Reporte, verificación, coincidencia y seguimiento — <span class="accent">en un solo flujo.</span></h2>
+    <div class="flow">
+      <div class="flow-step"><div class="idx">1</div><div class="body"><b>Reportar</b> <span>— cualquier líder comunitario reporta, incluso sin conexión a internet.</span></div></div>
+      <div class="flow-step"><div class="idx">2</div><div class="body"><b>Verificar</b> <span>— se calcula una prioridad objetiva, con criterios transparentes.</span></div></div>
+      <div class="flow-step"><div class="idx">3</div><div class="body"><b>Conectar</b> <span>— reglas simples y explicables sugieren ofertas de ayuda compatibles.</span></div></div>
+      <div class="flow-step"><div class="idx">4</div><div class="body"><b>Confirmar</b> <span>— seguimiento con evidencia hasta que la comunidad cierra el caso.</span></div></div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="3">
+    <div class="eyebrow"><span class="n">3</span><span class="t">Tecnologías de Google · 1:00–1:30</span></div>
+    <h2 class="big">Construido sobre el ecosistema de Google, <span class="accent">de verdad, en producción.</span></h2>
+    <div class="tech-grid">
+      <div class="tech-card"><div class="dot"></div><div><b>Firebase Authentication</b><span>Cuentas reales, recuperación de contraseña, 2FA con TOTP</span></div></div>
+      <div class="tech-card"><div class="dot"></div><div><b>Cloud Firestore</b><span>Base de datos en tiempo real, con caché offline persistente</span></div></div>
+      <div class="tech-card"><div class="dot"></div><div><b>Firebase Storage</b><span>Evidencia fotográfica de casos y entregas</span></div></div>
+      <div class="tech-card"><div class="dot"></div><div><b>Firebase Hosting</b><span>Despliegue real en producción, hoy visitable</span></div></div>
+      <div class="tech-card"><div class="dot"></div><div><b>Google Maps Platform</b><span>Mapa de casos con ajuste automático de vista</span></div></div>
+      <div class="tech-card"><div class="dot"></div><div><b>Gemini API</b><span>Narración de video generada con texto a voz</span></div></div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="4">
+    <div class="eyebrow"><span class="n">4</span><span class="t">Demo en vivo · 1:30–2:00</span></div>
+    <h2 class="big">No es una maqueta. <span class="accent">Es un proyecto real, hoy.</span></h2>
+    <p class="lead">19 casos reales, en 10 municipios distintos, corriendo en un proyecto Firebase real — no en una simulación local.</p>
+    <div class="url-box"><div class="dotpulse"></div><code>reactivaterritorio.web.app</code></div>
+    <p class="lead" style="margin-top:22px; font-size:15px;">Cuentas demo: <b style="color:var(--ink)">lider@demo.reactiva</b> · <b style="color:var(--ink)">org@demo.reactiva</b> · <b style="color:var(--ink)">admin@demo.reactiva</b> — contraseña <b style="color:var(--ink)">demo1234</b></p>
+  </section>
+
+  <section class="slide" data-slide="5">
+    <div class="eyebrow"><span class="n">5</span><span class="t">GitHub · 2:00–2:30</span></div>
+    <h2 class="big">Código público, <span class="accent">documentado de punta a punta.</span></h2>
+    <div class="url-box"><div class="dotpulse"></div><code>github.com/lnieto044/ReActiva_Territorio</code></div>
+    <div class="stat-row">
+      <div class="stat"><span class="v">React·TS</span><span class="l">Vite + Tailwind, TypeScript estricto</span></div>
+      <div class="stat"><span class="v">31</span><span class="l">pruebas unitarias en lógica de dominio</span></div>
+      <div class="stat"><span class="v">100%</span><span class="l">reglas de seguridad reales en Firestore</span></div>
+    </div>
+  </section>
+
+  <section class="slide close-slide" data-slide="6">
+    <div class="eyebrow"><span class="n">6</span><span class="t">Cierre · 2:30–3:00</span></div>
+    <h2 class="big">Coordinar la recuperación, <span class="accent">caso por caso.</span></h2>
+    <p class="lead">Lista para un piloto real que puede verificar cientos de casos y reactivar decenas de negocios en semanas, no en meses.</p>
+    <div class="ask">
+      <div><b>500</b><span>Unidades productivas registradas</span></div>
+      <div><b>80%</b><span>De los casos verificados</span></div>
+      <div><b>100</b><span>Negocios reactivados</span></div>
+      <div><b>150</b><span>Oportunidades laborales generadas</span></div>
+    </div>
+    <div class="url-box" style="margin-top:34px;"><div class="dotpulse"></div><code>Luis Guillermo Nieto Patiño · guillermonieto.2003@gmail.com</code></div>
+  </section>
+
+</div>
+
+<div class="brandmark"><div class="sq"></div><span>REACTIVA TERRITORIO</span></div>
+<nav id="dots"></nav>
+<div id="progress"></div>
+<div class="hint"><kbd>←</kbd><kbd>→</kbd> navegar &nbsp;·&nbsp; <kbd>1</kbd>–<kbd>7</kbd> ir a diapositiva</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsNav = document.getElementById('dots');
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', 'Ir a diapositiva ' + (i + 1));
+    b.addEventListener('click', () => go(i));
+    dotsNav.appendChild(b);
+  });
+  const dotEls = Array.from(dotsNav.children);
+
+  function go(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === current));
+    dotEls.forEach((d, idx) => d.classList.toggle('active', idx === current));
+    progress.style.width = ((current + 1) / slides.length * 100) + '%';
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { go(current + 1); }
+    else if (e.key === 'ArrowLeft') { go(current - 1); }
+    else if (e.key >= '1' && e.key <= '9') { go(parseInt(e.key, 10) - 1); }
+  });
+
+  const left = document.createElement('div'); left.className = 'clickzone left';
+  const right = document.createElement('div'); right.className = 'clickzone right';
+  left.addEventListener('click', () => go(current - 1));
+  right.addEventListener('click', () => go(current + 1));
+  document.body.appendChild(left);
+  document.body.appendChild(right);
+
+  go(0);
+</script>
